@@ -1,5 +1,5 @@
 const { ActivityType } = require("discord.js");
-const client = require("../bot");
+const client = require("../index");
 
 client.on("ready", () => {
   console.log(`bot is ready for work !!`);

@@ -1,6 +1,6 @@
 const { EmbedBuilder, PermissionsBitField } = require("discord.js");
 const { cooldown } = require("../handlers/functions");
-const client = require("../bot");
+const client = require("../index");
 const { PREFIX } = require("../settings/config");
 
 client.on("messageCreate", async (message) => {
