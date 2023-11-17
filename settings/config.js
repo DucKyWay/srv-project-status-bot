@@ -5,7 +5,7 @@ module.exports = {
   TOKEN: process.env.DISCORD_TOKEN || "",
   PREFIX: process.env.PREFIX || "",
   Slash: {
-    Global: false,
+    Global: true,
     GuildID: process.env.GuildID || "",
   },
   embed: {
