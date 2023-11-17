@@ -1,4 +1,4 @@
-const { ApplicationCommandType, ChannelType, PermissionFlagsBits,InteractionType } = require("discord.js");
+const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
 
 module.exports = {
