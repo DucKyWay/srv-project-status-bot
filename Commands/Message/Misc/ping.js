@@ -17,6 +17,6 @@ module.exports = {
    */
   run: async (client, message, args, prefix) => {
     // Code
-    return client.sendEmbed(message, `ping : \`${client.ws.ping}\``);
+    return client.sendEmbed(message, `🏓 Pong : \`${client.ws.ping}\``);
   },
 };
