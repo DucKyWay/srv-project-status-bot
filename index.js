@@ -5,4 +5,4 @@ const client = new Bot();
 
 module.exports = client;
 // Don't delete this token
-client.login(TOKEN);
+client.build(TOKEN);
