@@ -7,7 +7,7 @@ var datetime = currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + c
 client.on("ready", () => {
   console.log(datetime + `: bot is ready for work !!`);
   client.user.setActivity({
-    name: `Coded By TNN Group 🪦`,
+    name: `Coded By TNN Group 🪦` + datetime,
     type: ActivityType.Watching,
   });
 });
