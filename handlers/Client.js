@@ -65,14 +65,28 @@ class Bot extends Client {
           iconURL: interaction.user.avatarURL({ extension: 'jpg' }),
         })
         .setTitle(`${data['title'] ? data['title'].substring(0, 3000) : data}`)
-        .setDescription(`${data['description'] ? data['description'].substring(0, 3000) : ''}`);
+        .setDescription(`${data['description'] ? data['description'].substring(0, 3000) : ''}`)
+        .setTimestamp()
 
       // Check if data['URL'] is not null before setting it
-      if (data['URL'] !== null) {
+      if (data['url'] !== null) {
         embedBuilder.setURL(data['URL']);
       }
-      if (data['Thumbnail'] !== null) {
+      if (data['thumbnail'] !== null) {
         embedBuilder.setThumbnail(data['Thumbnail']);
+      }
+      if (data['fields'] !== undefined) {
+        embedBuilder.setFields(data['fields'])
+      }
+      if (data['image'] !== null) {
+        embedBuilder.setImage(data['image'])
+      }
+      if (data['footer'] !== undefined) {
+        if (data['footer'][1]) {
+          embedBuilder.setFooter({name: data['footer'][0] , iconURL: data['footer'][1]});
+        }else {
+          embedBuilder.setFooter({name: data['footer'][0]});
+        }
       }
 
       interaction
