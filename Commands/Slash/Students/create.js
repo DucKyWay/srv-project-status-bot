@@ -35,6 +35,7 @@ module.exports = {
             // Create a new text channel in the same category as the command was invoked
             const newChannel = await interaction.guild.channels.create({
                 name: groupName,
+                parent:"1174916854553260082",
                 type: ChannelType.GuildText,
             });
 
