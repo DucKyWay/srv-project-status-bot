@@ -1,5 +1,5 @@
 const { InteractionType, PermissionsBitField } = require("discord.js");
-const client = require("../index");
+const client = require("../bot");
 
 client.on("interactionCreate", async (interaction) => {
   // code
