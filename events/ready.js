@@ -2,7 +2,7 @@ const { ActivityType } = require("discord.js");
 const client = require("../index");
 
 var currentdate = new Date();
-var datetime = "Last Sync: " + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+var datetime = currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
 
 client.on("ready", () => {
   console.log(datetime + `: bot is ready for work !!`);
