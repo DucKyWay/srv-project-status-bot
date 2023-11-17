@@ -6,6 +6,8 @@ const client = new Client({
     ]
 });
 client.on("ready", () =>{
-    console.log("The AI bot is online");
+    console.log(`Logged in ${client.user.tag}!`);
 });
+
+// Don't delete this token
 client.login(process.env.DISCORD_TOKEN);
