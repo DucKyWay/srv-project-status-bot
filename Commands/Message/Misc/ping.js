@@ -3,7 +3,7 @@ const { Bot } = require("../../../handlers/Client");
 
 module.exports = {
   name: "ping",
-  description: "Get Bot Real Ping !!",
+  description: "Play Pingpong with bot.",
   userPermissions: PermissionFlagsBits.SendMessages,
   botPermissions: PermissionFlagsBits.SendMessages,
   category: "Misc",
