@@ -46,8 +46,12 @@ module.exports = {
         }
 
         if (chosenOption.name == 'create') {
-            return "Create new channel.";
-            
+            const namechannel = interaction.options.get('create').value;
+            console.log(namechannel);
+            const newChannel = await interaction.guild.channels.create({
+                name: namechannel,
+                type:  ChannelType.GuildText,
+              });
         }
         else if (chosenOption.name == 'adduser') {
             return "Add user to group."
