@@ -6,6 +6,7 @@ const {
   Collection,
   EmbedBuilder,
   ActionRowBuilder,
+  Colors,
 } = require("discord.js");
 const { title } = require("process");
 
@@ -63,15 +64,18 @@ class Bot extends Client {
       try {
         const embedBuilder = new EmbedBuilder()
           .setTitle(`${data['title'] ? data['title'].substring(0, 3000) : data}`)
-          .setAuthor({
-            name: interaction.user.username,
-            iconURL: interaction.user.avatarURL({ extension: 'jpg' }),
-          })
-          .setColor(`${data['color'] ? data['color'] : this.config.embed.color}`)
+          
+          .setColor(`${data['color'] ? data['color'] : 'Blurple'}`)
           .setDescription(`${data['description'] ? data['description'].substring(0, 3000) : ''}`)
           .setTimestamp()
 
         // Check if data['URL'] is not null before setting it
+        if (interaction.user.username && interaction.user.avatarURL) {
+          embedBuilder.setAuthor({
+            name: interaction.user.username,
+            iconURL: interaction.user.avatarURL({ extension: 'jpg' }),
+          })
+        }
         if (data['url'] !== null) {
           embedBuilder.setURL(data['URL']);
         }

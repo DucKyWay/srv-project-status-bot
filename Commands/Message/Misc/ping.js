@@ -1,5 +1,6 @@
 const { Message, PermissionFlagsBits } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
+const internal = require("stream");
 
 module.exports = {
   name: "ping",
@@ -17,6 +18,6 @@ module.exports = {
    */
   run: async (client, message, args, prefix) => {
     // Code
-    return client.sendEmbed(message, `🏓 Pong : \`${client.ws.ping}\``);
+   message.reply(`🏓 Pong : \`${client.ws.ping}\``);
   },
 };
