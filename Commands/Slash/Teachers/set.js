@@ -1,9 +1,11 @@
-const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, ButtonStyle, Colors, EmbedBuilder } = require("discord.js");
+const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, ButtonStyle, Colors, EmbedBuilder, ButtonBuilder, Emoji, ActionRowBuilder } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
 const client = require("../../..");
 const internal = require("stream");
 const { log } = require("console");
 const fs = require('fs');
+const { emoji } = require("../../../settings/config");
+const { SelectMenuBuilder } = require("@discordjs/builders");
 
 module.exports = {
     name: "set",
@@ -52,11 +54,34 @@ module.exports = {
         }
 
         if (!chosenOption) {
+            const embedbuilder = new EmbedBuilder()
+                .setTitle('Setting Bot')
+                .setColor('Gold')
+                .setThumbnail('https://i.pinimg.com/236x/3d/1f/0d/3d1f0d9c7a02cf3ac22b47a99b29aa99.jpg')
+                .setDescription('setting your bot for student create group and make onther this with bot.')
+                .setTimestamp()
+
+            const buttons = new ButtonBuilder()
+                .setLabel('Confirm!')
+                .setStyle(3)
+                .setCustomId('confirm')
+                .setEmoji(emoji.success)
+
+            const selectMenu = new SelectMenuBuilder()
+                .setCustomId('selectcategory')
+                .setPlaceholder('Select an option...')
+                .addOptions({
+                    label: 'test1',
+                    value: 'test2',
+                })
+
+            // Action row with both button and select menu components
+            const rowButton = new ActionRowBuilder().addComponents(buttons);
+            const rowSelectMenu = new ActionRowBuilder().addComponents(selectMenu);
+
             interaction.reply({
-                embeds: [
-                    new EmbedBuilder()
-                        .setTitle('Comming soon..')
-                ]
+                embeds: [embedbuilder],
+                components: [rowButton, rowSelectMenu],
             })
         } else {
             if (chosenOption.name == 'setcategory') {
@@ -96,7 +121,6 @@ module.exports = {
                                     .setTitle(`categoryId [${categoryId}] has been updated`)
                                     .setColor('Yellow')
                             ],
-                            ephemeral: true,
                         })
                     });
                 });
@@ -137,7 +161,6 @@ module.exports = {
                                     .setTitle(`studentRoleId [${studentRoleId}] has been updated`)
                                     .setColor('Yellow')
                             ],
-                            ephemeral: true,
                         })
                     });
                 });
@@ -179,7 +202,6 @@ module.exports = {
                                     .setTitle(`teacherRoleId [${teacherRoleId}] has been updated`)
                                     .setColor('Yellow')
                             ],
-                            ephemeral: true,
                         })
                     });
                 });
@@ -254,7 +276,6 @@ client.on('interactionCreate', interaction => {
                                             .setDescription('Click on the teacher\'s name to initiate a direct message.')
                                             .addFields(teachers.filter(teacher => teacher.name && teacher.value))
                                     ],
-                                    ephemeral: true,
                                 })
                             }
                         } else {
