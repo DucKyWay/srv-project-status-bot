@@ -144,8 +144,9 @@ client.on('interactionCreate', interaction => {
                             if (membersWithRole.size == 0) {
                                 console.log(`No Teacher`)
                                 interaction.reply({
-                                    content: '```No Teacher \nsorry try again later```',
-                                    ephemeral: true,
+                                    embeds: [new EmbedBuilder()
+                                    .setTitle('No Teacher Please Try Again Later!!')
+                                    ]
                                 })
                             } else {
 
