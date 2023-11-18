@@ -49,6 +49,7 @@ module.exports = {
             const group_name = interaction.options.get('create').value;
             const role_name = interaction.options.get('create').value;
             const role_color = '#ffeb00';
+            const member = interaction.member;
 
             try {
                 const new_group_name = await interaction.guild.channels.create({
@@ -62,6 +63,7 @@ module.exports = {
                     color: role_color
                 });
 
+                await member.roles.add(interaction.guild.roles.cache.find(r => r.name === role_name));
                 await interaction.reply(`Channel <#${new_group_name.id}> and role <@&${new_role.id}> are created!`);
             } catch (error) {
                 console.error(error);
