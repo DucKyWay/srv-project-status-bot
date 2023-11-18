@@ -52,150 +52,153 @@ module.exports = {
         }
 
         if (!chosenOption) {
-
-        }
-
-
-
-        if (chosenOption.name == 'setcategory') {
-
-            fs.readFile('./data/data.json', 'utf8', (err, data) => {
-                if (err) {
-                    console.error('Error reading data.json:', err);
-                    return;
-                }
-
-                const guildId = interaction.guild.id;
-                const categoryId = interaction.options.get('setcategory').value;
-
-                // Parse JSON data
-                const jsonData = JSON.parse(data);
-
-                // Update the teacher role for the corresponding guild
-                if (!jsonData[guildId]) {
-                    jsonData[guildId] = {};
-                }
-
-                jsonData[guildId].categoryId = categoryId;
-
-                // Convert the updated data to JSON string
-                const updatedData = JSON.stringify(jsonData, null, 2);
-
-                // Write the updated data back to data.json
-                fs.writeFile('./data/data.json', updatedData, 'utf8', (writeErr) => {
-                    if (writeErr) {
-                        console.error('Error writing data.json:', writeErr);
-                        return;
-                    }
-                    console.log(`categoryId [${categoryId}] has been updated and written to data.json`);
-                    interaction.reply({
-                        embeds: [
-                            new EmbedBuilder()
-                            .setTitle(`categoryId [${categoryId}] has been updated`)
-                            .setColor('Yellow')
-                        ],
-                        ephemeral: true,
-                    })
-                });
-            });
-        } else if (chosenOption.name == 'setstudentrole') {
-
-            fs.readFile('./data/data.json', 'utf8', (err, data) => {
-                if (err) {
-                    console.error('Error reading data.json:', err);
-                    return;
-                }
-
-                const guildId = interaction.guild.id;
-                const studentRoleId = interaction.options.get('setstudentrole').value;
-
-                // Parse JSON data
-                const jsonData = JSON.parse(data);
-
-                // Update the teacher role for the corresponding guild
-                if (!jsonData[guildId]) {
-                    jsonData[guildId] = {};
-                }
-
-                jsonData[guildId].studentRole = studentRoleId;
-
-                // Convert the updated data to JSON string
-                const updatedData = JSON.stringify(jsonData, null, 2);
-
-                // Write the updated data back to data.json
-                fs.writeFile('./data/data.json', updatedData, 'utf8', (writeErr) => {
-                    if (writeErr) {
-                        console.error('Error writing data.json:', writeErr);
-                        return;
-                    }
-                    console.log(`studentRoleId [${studentRoleId}] has been updated and written to data.json`);
-                    interaction.reply({
-                        embeds: [
-                            new EmbedBuilder()
-                            .setTitle(`studentRoleId [${studentRoleId}] has been updated`)
-                            .setColor('Yellow')
-                        ],
-                        ephemeral: true,
-                    })
-                });
-            });
-
-        } else if (chosenOption.name == 'setteacherrole') {
-            // อ่านไฟล์ data.json
-            fs.readFile('./data/data.json', 'utf8', (err, data) => {
-                if (err) {
-                    console.error('Error reading data.json:', err);
-                    return;
-                }
-
-                const guildId = interaction.guild.id;
-                const teacherRoleId = interaction.options.get('setteacherrole').value;
-
-                // Parse JSON data
-                const jsonData = JSON.parse(data);
-
-                // Update the teacher role for the corresponding guild
-                if (!jsonData[guildId]) {
-                    jsonData[guildId] = {};
-                }
-
-                jsonData[guildId].teacherRole = teacherRoleId;
-
-                // Convert the updated data to JSON string
-                const updatedData = JSON.stringify(jsonData, null, 2);
-
-                // Write the updated data back to data.json
-                fs.writeFile('./data/data.json', updatedData, 'utf8', (writeErr) => {
-                    if (writeErr) {
-                        console.error('Error writing data.json:', writeErr);
-                        return;
-                    }
-                    console.log(`teacherRoleId [${teacherRoleId}] has been updated and written to data.json`);
-                    interaction.reply({
-                        embeds: [
-                            new EmbedBuilder()
-                            .setTitle(`teacherRoleId [${teacherRoleId}] has been updated`)
-                            .setColor('Yellow')
-                        ],
-                        ephemeral: true,
-                    })
-                });
-            });
-
+            interaction.reply({
+                embeds: [
+                    new EmbedBuilder()
+                        .setTitle('Comming soon..')
+                ]
+            })
         } else {
+            if (chosenOption.name == 'setcategory') {
 
-            return client.sendEmbed(interaction, {
-                title: 'Error 404',
-                description: 'please contact your teacher for fix it!',
-                color: '#ED4245',
-                buttons: [{
-                    label: 'Call Teacher',
-                    style: ButtonStyle.Danger,
-                    customId: 'callcenter'
-                }]
+                fs.readFile('./data/data.json', 'utf8', (err, data) => {
+                    if (err) {
+                        console.error('Error reading data.json:', err);
+                        return;
+                    }
+
+                    const guildId = interaction.guild.id;
+                    const categoryId = interaction.options.get('setcategory').value;
+
+                    // Parse JSON data
+                    const jsonData = JSON.parse(data);
+
+                    // Update the teacher role for the corresponding guild
+                    if (!jsonData[guildId]) {
+                        jsonData[guildId] = {};
+                    }
+
+                    jsonData[guildId].categoryId = categoryId;
+
+                    // Convert the updated data to JSON string
+                    const updatedData = JSON.stringify(jsonData, null, 2);
+
+                    // Write the updated data back to data.json
+                    fs.writeFile('./data/data.json', updatedData, 'utf8', (writeErr) => {
+                        if (writeErr) {
+                            console.error('Error writing data.json:', writeErr);
+                            return;
+                        }
+                        console.log(`categoryId [${categoryId}] has been updated and written to data.json`);
+                        interaction.reply({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setTitle(`categoryId [${categoryId}] has been updated`)
+                                    .setColor('Yellow')
+                            ],
+                            ephemeral: true,
+                        })
+                    });
+                });
+            } else if (chosenOption.name == 'setstudentrole') {
+
+                fs.readFile('./data/data.json', 'utf8', (err, data) => {
+                    if (err) {
+                        console.error('Error reading data.json:', err);
+                        return;
+                    }
+
+                    const guildId = interaction.guild.id;
+                    const studentRoleId = interaction.options.get('setstudentrole').value;
+
+                    // Parse JSON data
+                    const jsonData = JSON.parse(data);
+
+                    // Update the teacher role for the corresponding guild
+                    if (!jsonData[guildId]) {
+                        jsonData[guildId] = {};
+                    }
+
+                    jsonData[guildId].studentRole = studentRoleId;
+
+                    // Convert the updated data to JSON string
+                    const updatedData = JSON.stringify(jsonData, null, 2);
+
+                    // Write the updated data back to data.json
+                    fs.writeFile('./data/data.json', updatedData, 'utf8', (writeErr) => {
+                        if (writeErr) {
+                            console.error('Error writing data.json:', writeErr);
+                            return;
+                        }
+                        console.log(`studentRoleId [${studentRoleId}] has been updated and written to data.json`);
+                        interaction.reply({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setTitle(`studentRoleId [${studentRoleId}] has been updated`)
+                                    .setColor('Yellow')
+                            ],
+                            ephemeral: true,
+                        })
+                    });
+                });
+
+            } else if (chosenOption.name == 'setteacherrole') {
+                // อ่านไฟล์ data.json
+                fs.readFile('./data/data.json', 'utf8', (err, data) => {
+                    if (err) {
+                        console.error('Error reading data.json:', err);
+                        return;
+                    }
+
+                    const guildId = interaction.guild.id;
+                    const teacherRoleId = interaction.options.get('setteacherrole').value;
+
+                    // Parse JSON data
+                    const jsonData = JSON.parse(data);
+
+                    // Update the teacher role for the corresponding guild
+                    if (!jsonData[guildId]) {
+                        jsonData[guildId] = {};
+                    }
+
+                    jsonData[guildId].teacherRole = teacherRoleId;
+
+                    // Convert the updated data to JSON string
+                    const updatedData = JSON.stringify(jsonData, null, 2);
+
+                    // Write the updated data back to data.json
+                    fs.writeFile('./data/data.json', updatedData, 'utf8', (writeErr) => {
+                        if (writeErr) {
+                            console.error('Error writing data.json:', writeErr);
+                            return;
+                        }
+                        console.log(`teacherRoleId [${teacherRoleId}] has been updated and written to data.json`);
+                        interaction.reply({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setTitle(`teacherRoleId [${teacherRoleId}] has been updated`)
+                                    .setColor('Yellow')
+                            ],
+                            ephemeral: true,
+                        })
+                    });
+                });
+
+            } else {
+
+                return client.sendEmbed(interaction, {
+                    title: 'Error 404',
+                    description: 'please contact your teacher for fix it!',
+                    color: '#ED4245',
+                    buttons: [{
+                        label: 'Call Teacher',
+                        style: ButtonStyle.Danger,
+                        customId: 'callcenter'
+                    }]
+                }
+
+                );
             }
-
-            );
         }
     },
 };
