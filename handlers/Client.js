@@ -9,6 +9,7 @@ const {
   Colors,
 } = require("discord.js");
 const { title } = require("process");
+const mongoose = require('mongoose');
 
 class Bot extends Client {
   constructor() {
@@ -43,7 +44,7 @@ class Bot extends Client {
     this.cooldowns = new Collection();
     this.events = 0;
   }
-
+  
   async build(token) {
     await loadHandlers(this);
     this.login(token);
@@ -132,6 +133,20 @@ class Bot extends Client {
       text: `Requested By ${user.username}`,
       iconURL: user.displayAvatarURL(),
     };
+  }
+
+  connectToDatabase() {
+    const mongoURI = process.env.MONGODB_URI;
+    mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+
+    const db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+    db.once('open', () => {
+      console.log("Connected successfully to MongoDB");
+    });
   }
 }
 
