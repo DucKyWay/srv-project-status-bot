@@ -9,6 +9,16 @@ const {
  * @param {Bot} client
  */
 module.exports = async (client) => {
+
+  const originalConsoleLog = console.log;
+
+console.log = function () {
+  const time = new Date()
+  const args = Array.from(arguments);
+  args.unshift(`[${time.getDay()}/${time.getMonth()}/${time.getFullYear()}|${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}] >`);
+  originalConsoleLog.apply(console, args);
+};
+
   // code
   //   Message Command Handler
   try {

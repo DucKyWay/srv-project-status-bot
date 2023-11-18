@@ -1,9 +1,11 @@
+const { ButtonBuilder } = require("@discordjs/builders");
 const {
   Client,
   GatewayIntentBits,
   Partials,
   Collection,
   EmbedBuilder,
+  ActionRowBuilder,
 } = require("discord.js");
 const { title } = require("process");
 
@@ -83,28 +85,47 @@ class Bot extends Client {
       }
       if (data['footer'] !== undefined) {
         if (data['footer'][1]) {
-          embedBuilder.setFooter({name: data['footer'][0] , iconURL: data['footer'][1]});
-        }else {
-          embedBuilder.setFooter({name: data['footer'][0]});
+          embedBuilder.setFooter({ name: data['footer'][0], iconURL: data['footer'][1] });
+        } else {
+          embedBuilder.setFooter({ name: data['footer'][0] });
         }
       }
 
-      interaction
-        .reply({
+      if (data['buttons'] !== undefined) {
+        const buttons = data['buttons'].map(button => new ButtonBuilder()
+          .setCustomId(button.customId)
+          .setLabel(button.label)
+          .setStyle(button.style)
+        );
+
+        const row = new ActionRowBuilder().addComponents(buttons);
+
+        interaction.reply({
+          embeds: [embedBuilder],
+          components: [row],
+        })
+          .catch((error) => {
+            console.error(`Error replying to interaction: ${error}`);
+          });
+      } else {
+        interaction.reply({
           embeds: [embedBuilder],
         })
-        .catch((e) => { });
+          .catch((error) => {
+            console.error(`Error replying to interaction: ${error}`);
+          });
+      }
     }
   }
 
 
-  getFooter(user) {
-    return {
-      text: `Requested By ${user.username}`,
-      iconURL: user.displayAvatarURL(),
-    };
+    getFooter(user) {
+      return {
+        text: `Requested By ${user.username}`,
+        iconURL: user.displayAvatarURL(),
+      };
+    }
   }
-}
 
 module.exports = { Bot };
 

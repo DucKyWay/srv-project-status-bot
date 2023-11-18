@@ -1,4 +1,4 @@
-const { ApplicationCommandType, ChannelType, PermissionFlagsBits,InteractionType } = require("discord.js");
+const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, ButtonStyle } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
 
 module.exports = {
@@ -16,15 +16,9 @@ module.exports = {
             required: false,
         },
         {
-            name: 'addcatoegory',
-            description: 'add category channel in server for student create channel teammate group.',
-            type: 3,
-            required: false,
-        },
-        {
-            name: 'changecatoegoryname',
-            description: 'change category name channel in server for student create channel teammate group.',
-            type: 3,
+            name: 'set-role-teacher',
+            description: 'set your teacher role for bot contact us!',
+            type: 8,
             required: false,
         },
         {
@@ -35,10 +29,15 @@ module.exports = {
         }
     ],
 
-    run: async (client, interaction,guild) => {
-        const optionNames = ['setcategory', 'addcategory', 'changecategoryname','testerror'];
+    run: async (client, interaction, guild) => {
+        const optionNames = ['setcategory','set-role-teacher', 'testerror'];
         let chosenOption = null;
-    
+        const { customId } = interaction;
+        // ตรวจสอบ customId เพื่อดำเนินการต่อไปตามที่คุณต้องการ
+        if (customId === 'callteacher') {
+            interaction.reply(`conntact this '\ ${interaction} \'`)
+        }
+
         for (const optionName of optionNames) {
             const currentOption = interaction.options.get(optionName);
             if (currentOption) {
@@ -46,27 +45,34 @@ module.exports = {
                 break;
             }
         }
-    
+
         if (!chosenOption) {
-            // No option was chosen
-            return interaction.reply('Please choose an option.');
+
         }
+
+
 
         if (chosenOption.name == 'setcategory') {
-            
-        }
-        else if (chosenOption.name == 'addcategory') {
 
-        }
-        else if (chosenOption.name == 'changecategoryname') {
+        }else if (chosenOption.name == 'set-role-teacher') {
+
+            console.log(`${chosenOption.name}`)
 
         }else {
-            return client.sendEmbed(interaction,{
+
+            return client.sendEmbed(interaction, {
                 title: 'Error 404',
                 description: 'please contact your teacher for fix it!',
                 color: '#ED4245',
-            });
+                buttons: [{
+                    label: 'Call Teacher',
+                    style: ButtonStyle.Danger,
+                    customId: 'callteacher'
+                }]
+            }
+
+            );
         }
     },
-    
+
 };
