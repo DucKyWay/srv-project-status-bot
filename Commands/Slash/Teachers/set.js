@@ -63,7 +63,7 @@ module.exports = {
             return client.sendEmbed(interaction, {
                 title: 'Error 404',
                 description: 'please contact your teacher for fix it!',
-                color: Colors.Red,
+                color: '#ED4245',
                 buttons: [{
                     label: 'Call Teacher',
                     style: ButtonStyle.Danger,

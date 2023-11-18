@@ -60,72 +60,76 @@ class Bot extends Client {
         })
         .catch((e) => { });
     } else {
-      const embedBuilder = new EmbedBuilder()
-        .setColor(`${data && data['color'] ? data['color'] : this.config.embed.color}`)
-        .setAuthor({
-          name: interaction.user.username,
-          iconURL: interaction.user.avatarURL({ extension: 'jpg' }),
-        })
-        .setTitle(`${data['title'] ? data['title'].substring(0, 3000) : data}`)
-        .setDescription(`${data['description'] ? data['description'].substring(0, 3000) : ''}`)
-        .setTimestamp()
+      try {
+        const embedBuilder = new EmbedBuilder()
+          .setColor(`${data['color'] ? data['color'] : this.config.embed.color}`)
+          .setAuthor({
+            name: interaction.user.username,
+            iconURL: interaction.user.avatarURL({ extension: 'jpg' }),
+          })
+          .setTitle(`${data['title'] ? data['title'].substring(0, 3000) : data}`)
+          .setDescription(`${data['description'] ? data['description'].substring(0, 3000) : ''}`)
+          .setTimestamp()
 
-      // Check if data['URL'] is not null before setting it
-      if (data['url'] !== null) {
-        embedBuilder.setURL(data['URL']);
-      }
-      if (data['thumbnail'] !== null) {
-        embedBuilder.setThumbnail(data['Thumbnail']);
-      }
-      if (data['fields'] !== undefined) {
-        embedBuilder.setFields(data['fields'])
-      }
-      if (data['image'] !== null) {
-        embedBuilder.setImage(data['image'])
-      }
-      if (data['footer'] !== undefined) {
-        if (data['footer'][1]) {
-          embedBuilder.setFooter({ name: data['footer'][0], iconURL: data['footer'][1] });
-        } else {
-          embedBuilder.setFooter({ name: data['footer'][0] });
+        // Check if data['URL'] is not null before setting it
+        if (data['url'] !== null) {
+          embedBuilder.setURL(data['URL']);
         }
-      }
+        if (data['thumbnail'] !== null) {
+          embedBuilder.setThumbnail(data['Thumbnail']);
+        }
+        if (data['fields'] !== undefined) {
+          embedBuilder.setFields(data['fields'])
+        }
+        if (data['image'] !== null) {
+          embedBuilder.setImage(data['image'])
+        }
+        if (data['footer'] !== undefined) {
+          if (data['footer'][1]) {
+            embedBuilder.setFooter({ name: data['footer'][0], iconURL: data['footer'][1] });
+          } else {
+            embedBuilder.setFooter({ name: data['footer'][0] });
+          }
+        }
 
-      if (data['buttons'] !== undefined) {
-        const buttons = data['buttons'].map(button => new ButtonBuilder()
-          .setCustomId(button.customId)
-          .setLabel(button.label)
-          .setStyle(button.style)
-        );
+        if (data['buttons'] !== undefined) {
+          const buttons = data['buttons'].map(button => new ButtonBuilder()
+            .setCustomId(button.customId)
+            .setLabel(button.label)
+            .setStyle(button.style)
+          );
 
-        const row = new ActionRowBuilder().addComponents(buttons);
+          const row = new ActionRowBuilder().addComponents(buttons);
 
-        interaction.reply({
-          embeds: [embedBuilder],
-          components: [row],
-        })
-          .catch((error) => {
-            console.error(`Error replying to interaction: ${error}`);
-          });
-      } else {
-        interaction.reply({
-          embeds: [embedBuilder],
-        })
-          .catch((error) => {
-            console.error(`Error replying to interaction: ${error}`);
-          });
+          interaction.reply({
+            embeds: [embedBuilder],
+            components: [row],
+          })
+            .catch((error) => {
+              console.error(`Error replying to interaction: ${error}`);
+            });
+        } else {
+          interaction.reply({
+            embeds: [embedBuilder],
+          })
+            .catch((error) => {
+              console.error(`Error replying to interaction: ${error}`);
+            });
+        }
+      } catch (e) {
+        console.log(e);
       }
     }
   }
 
 
-    getFooter(user) {
-      return {
-        text: `Requested By ${user.username}`,
-        iconURL: user.displayAvatarURL(),
-      };
-    }
+  getFooter(user) {
+    return {
+      text: `Requested By ${user.username}`,
+      iconURL: user.displayAvatarURL(),
+    };
   }
+}
 
 module.exports = { Bot };
 
