@@ -20,7 +20,13 @@ module.exports = {
             required: false,
         },
         {
-            name: 'set-role-teacher',
+            name: 'setteacherrole',
+            description: 'set your teacher role for bot contact us!',
+            type: 8,
+            required: false,
+        },
+        {
+            name: 'setstudentrole',
             description: 'set your teacher role for bot contact us!',
             type: 8,
             required: false,
@@ -34,7 +40,7 @@ module.exports = {
     ],
 
     run: async (client, interaction, guild) => {
-        const optionNames = ['setcategory', 'set-role-teacher', 'testerror'];
+        const optionNames = ['setcategory', 'setteacherrole', 'setstudentrole', 'testerror'];
         let chosenOption = null;
 
         for (const optionName of optionNames) {
@@ -53,8 +59,45 @@ module.exports = {
 
         if (chosenOption.name == 'setcategory') {
 
-        } else if (chosenOption.name == 'set-role-teacher') {
+        } else if (chosenOption.name == 'setstudentrole') {
 
+            fs.readFile('./data/data.json', 'utf8', (err, data) => {
+                if (err) {
+                    console.error('Error reading data.json:', err);
+                    return;
+                }
+
+                const guildId = interaction.guild.id;
+                const studentRoleId = interaction.options.get('setstudentrole').value;
+
+                // Parse JSON data
+                const jsonData = JSON.parse(data);
+
+                // Update the teacher role for the corresponding guild
+                if (!jsonData[guildId]) {
+                    jsonData[guildId] = {};
+                }
+
+                jsonData[guildId].studentRole = studentRoleId;
+
+                // Convert the updated data to JSON string
+                const updatedData = JSON.stringify(jsonData, null, 2);
+
+                // Write the updated data back to data.json
+                fs.writeFile('./data/data.json', updatedData, 'utf8', (writeErr) => {
+                    if (writeErr) {
+                        console.error('Error writing data.json:', writeErr);
+                        return;
+                    }
+                    console.log(`studentRoleId [${studentRoleId}] has been updated and written to data.json`);
+                    interaction.reply({
+                        content: `studentRoleId [${studentRoleId}] has been updated`,
+                        ephemeral: true,
+                    })
+                });
+            });
+
+        } else if (chosenOption.name == 'setteacherrole') {
             // อ่านไฟล์ data.json
             fs.readFile('./data/data.json', 'utf8', (err, data) => {
                 if (err) {
@@ -63,7 +106,7 @@ module.exports = {
                 }
 
                 const guildId = interaction.guild.id;
-                const teacherRoleId = interaction.options.get('set-role-teacher').value;
+                const teacherRoleId = interaction.options.get('setteacherrole').value;
 
                 // Parse JSON data
                 const jsonData = JSON.parse(data);
@@ -145,7 +188,7 @@ client.on('interactionCreate', interaction => {
                                 console.log(`No Teacher`)
                                 interaction.reply({
                                     embeds: [new EmbedBuilder()
-                                    .setTitle('No Teacher Please Try Again Later!!')
+                                        .setTitle('No Teacher Please Try Again Later!!')
                                     ]
                                 })
                             } else {
