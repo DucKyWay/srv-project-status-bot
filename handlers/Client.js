@@ -62,12 +62,12 @@ class Bot extends Client {
     } else {
       try {
         const embedBuilder = new EmbedBuilder()
-          .setColor(`${data['color'] ? data['color'] : this.config.embed.color}`)
+          .setTitle(`${data['title'] ? data['title'].substring(0, 3000) : data}`)
           .setAuthor({
             name: interaction.user.username,
             iconURL: interaction.user.avatarURL({ extension: 'jpg' }),
           })
-          .setTitle(`${data['title'] ? data['title'].substring(0, 3000) : data}`)
+          .setColor(`${data['color'] ? data['color'] : this.config.embed.color}`)
           .setDescription(`${data['description'] ? data['description'].substring(0, 3000) : ''}`)
           .setTimestamp()
 
