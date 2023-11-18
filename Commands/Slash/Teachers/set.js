@@ -3,6 +3,7 @@ const { Bot } = require("../../../handlers/Client");
 const client = require("../../..");
 const internal = require("stream");
 const { log } = require("console");
+const fs = require('fs');
 
 module.exports = {
     name: "set",
@@ -33,9 +34,9 @@ module.exports = {
     ],
 
     run: async (client, interaction, guild) => {
-        const optionNames = ['setcategory','set-role-teacher', 'testerror'];
+        const optionNames = ['setcategory', 'set-role-teacher', 'testerror'];
         let chosenOption = null;
-        
+
         for (const optionName of optionNames) {
             const currentOption = interaction.options.get(optionName);
             if (currentOption) {
@@ -52,11 +53,46 @@ module.exports = {
 
         if (chosenOption.name == 'setcategory') {
 
-        }else if (chosenOption.name == 'set-role-teacher') {
+        } else if (chosenOption.name == 'set-role-teacher') {
 
-            
+            // อ่านไฟล์ data.json
+            fs.readFile('./data/data.json', 'utf8', (err, data) => {
+                if (err) {
+                    console.error('Error reading data.json:', err);
+                    return;
+                }
 
-        }else {
+                const guildId = interaction.guild.id;
+                const teacherRoleId = interaction.options.get('set-role-teacher').value;
+
+                // Parse JSON data
+                const jsonData = JSON.parse(data);
+
+                // Update the teacher role for the corresponding guild
+                if (!jsonData[guildId]) {
+                    jsonData[guildId] = {};
+                }
+
+                jsonData[guildId].teacherRole = teacherRoleId;
+
+                // Convert the updated data to JSON string
+                const updatedData = JSON.stringify(jsonData, null, 2);
+
+                // Write the updated data back to data.json
+                fs.writeFile('./data/data.json', updatedData, 'utf8', (writeErr) => {
+                    if (writeErr) {
+                        console.error('Error writing data.json:', writeErr);
+                        return;
+                    }
+                    console.log(`teacherRoleId [${teacherRoleId}] has been updated and written to data.json`);
+                    interaction.reply({
+                        content: `teacherRoleId [${teacherRoleId}] has been updated`,
+                        ephemeral: true,
+                    })
+                });
+            });
+
+        } else {
 
             return client.sendEmbed(interaction, {
                 title: 'Error 404',
@@ -71,16 +107,16 @@ module.exports = {
 
             );
         }
-    },    
+    },
 };
 
 client.on('interactionCreate', (interaction) => {
     if (interaction.type == InteractionType.MessageComponent && interaction.isButton()) {
         const customId = interaction.customId;
         if (customId) {
-          if (customId == 'callcenter') {
-            
-          }
+            if (customId == 'callcenter') {
+
+            }
         }
     }
 });
