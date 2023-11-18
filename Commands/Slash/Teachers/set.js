@@ -16,7 +16,7 @@ module.exports = {
         {
             name: 'setcategory',
             description: 'set category channel in server for student create channel teammate group.',
-            type: 3,
+            type: 7,
             required: false,
         },
         {
@@ -59,6 +59,45 @@ module.exports = {
 
         if (chosenOption.name == 'setcategory') {
 
+            fs.readFile('./data/data.json', 'utf8', (err, data) => {
+                if (err) {
+                    console.error('Error reading data.json:', err);
+                    return;
+                }
+
+                const guildId = interaction.guild.id;
+                const categoryId = interaction.options.get('setcategory').value;
+
+                // Parse JSON data
+                const jsonData = JSON.parse(data);
+
+                // Update the teacher role for the corresponding guild
+                if (!jsonData[guildId]) {
+                    jsonData[guildId] = {};
+                }
+
+                jsonData[guildId].categoryId = categoryId;
+
+                // Convert the updated data to JSON string
+                const updatedData = JSON.stringify(jsonData, null, 2);
+
+                // Write the updated data back to data.json
+                fs.writeFile('./data/data.json', updatedData, 'utf8', (writeErr) => {
+                    if (writeErr) {
+                        console.error('Error writing data.json:', writeErr);
+                        return;
+                    }
+                    console.log(`categoryId [${categoryId}] has been updated and written to data.json`);
+                    interaction.reply({
+                        embeds: [
+                            new EmbedBuilder()
+                            .setTitle(`categoryId [${categoryId}] has been updated`)
+                            .setColor('Yellow')
+                        ],
+                        ephemeral: true,
+                    })
+                });
+            });
         } else if (chosenOption.name == 'setstudentrole') {
 
             fs.readFile('./data/data.json', 'utf8', (err, data) => {
@@ -91,7 +130,11 @@ module.exports = {
                     }
                     console.log(`studentRoleId [${studentRoleId}] has been updated and written to data.json`);
                     interaction.reply({
-                        content: `studentRoleId [${studentRoleId}] has been updated`,
+                        embeds: [
+                            new EmbedBuilder()
+                            .setTitle(`studentRoleId [${studentRoleId}] has been updated`)
+                            .setColor('Yellow')
+                        ],
                         ephemeral: true,
                     })
                 });
@@ -129,7 +172,11 @@ module.exports = {
                     }
                     console.log(`teacherRoleId [${teacherRoleId}] has been updated and written to data.json`);
                     interaction.reply({
-                        content: `teacherRoleId [${teacherRoleId}] has been updated`,
+                        embeds: [
+                            new EmbedBuilder()
+                            .setTitle(`teacherRoleId [${teacherRoleId}] has been updated`)
+                            .setColor('Yellow')
+                        ],
                         ephemeral: true,
                     })
                 });
