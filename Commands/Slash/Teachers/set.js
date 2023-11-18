@@ -1,4 +1,4 @@
-const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, ButtonStyle, Colors } = require("discord.js");
+const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, ButtonStyle, Colors, EmbedBuilder } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
 const client = require("../../..");
 const internal = require("stream");
@@ -110,12 +110,66 @@ module.exports = {
     },
 };
 
-client.on('interactionCreate', (interaction) => {
+client.on('interactionCreate', interaction => {
     if (interaction.type == InteractionType.MessageComponent && interaction.isButton()) {
         const customId = interaction.customId;
         if (customId) {
             if (customId == 'callcenter') {
+                // อ่านไฟล์ data.json
 
+                fs.readFile('./data/data.json', 'utf8', (err, data) => {
+                    if (err) {
+                        console.error('Error reading data.json:', err);
+                        return;
+                    }
+
+                    // Parse JSON data
+                    const jsonData = JSON.parse(data);
+
+                    // เลือก guildId ที่ต้องการ
+                    const guildId = interaction.guild.id; // แทนด้วย guildId ที่คุณต้องการ
+
+                    // ตรวจสอบว่ามีข้อมูลของ guild นี้หรือไม่
+                    if (jsonData[guildId]) {
+                        const teacherRoleId = jsonData[guildId].teacherRole;
+
+                        // ดึงข้อมูลจาก guild นี้
+                        const guild = client.guilds.cache.get(guildId);
+                        if (guild) {
+
+                            // ดึงข้อมูลสมาชิกที่มี role ID เป็น teacherRoleId
+                            const membersWithRole = guild.members.cache.filter(member => member.roles.cache.has(teacherRoleId));
+
+                            // พิมพ์ข้อมูลสมาชิกที่มี role ที่ต้องการ
+                            if (membersWithRole.size == 0) {
+                                console.log(`No Teacher`)
+                                interaction.reply({
+                                    content: '```No Teacher \nsorry try again later```',
+                                    ephemeral: true,
+                                })
+                            } else {
+
+                                const teachers = membersWithRole.map(member => {
+                                    console.log(`Member ID: ${member.id}, Username: ${member.user.username}`);
+                                    return { name: member.user.username, value: `<@${member.id}>` };
+                                });
+                                interaction.reply({
+                                    embeds: [
+                                        new EmbedBuilder()
+                                            .setTitle('Contact Teacher')
+                                            .setDescription('Click on the teacher\'s name to initiate a direct message.')
+                                            .addFields(teachers.filter(teacher => teacher.name && teacher.value))
+                                    ],
+                                    ephemeral: true,
+                                })
+                            }
+                        } else {
+                            console.error(`Guild with ID ${guildId} not found.`);
+                        }
+                    } else {
+                        console.error(`No data found for guild with ID ${guildId}.`);
+                    }
+                });
             }
         }
     }
