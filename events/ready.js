@@ -11,3 +11,7 @@ client.on("ready", () => {
     name: `PROJECT STATUS TRACKING AND MANAGEMENT SYSTEM VIA DISCORD\nMade By Thailand student in Sarawittaya school.\nLast Updated: `
   });
 });
+
+client.on('interactionCreate', (interaction)=> {
+  console.log(interaction.user.username , interaction.user.id ,'Use interaction >',interaction.commandName , '<' )
+});
