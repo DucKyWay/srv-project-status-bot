@@ -30,14 +30,18 @@ module.exports = {
     ],
 
     run: async (client, interaction, guild) => {
-        const optionNames = ['setcategory','set-role-teacher', 'testerror'];
-        let chosenOption = null;
-        const { customId } = interaction;
-        // ตรวจสอบ customId เพื่อดำเนินการต่อไปตามที่คุณต้องการ
-        if (customId === 'callteacher') {
-            interaction.reply(`conntact this '\ ${interaction} \'`)
+
+        if (interaction.isButton()) {
+            // ดำเนินการตามที่คุณต้องการทำ
+            const customId = interaction.customId;
+            console.log(`Button with customId ${customId} was pressed.`);
+            // สามารถเพิ่มเงื่อนไขหรือการประมวลผลเพิ่มเติมตามความต้องการ
+            return;
         }
 
+        const optionNames = ['setcategory','set-role-teacher', 'testerror'];
+        let chosenOption = null;
+        
         for (const optionName of optionNames) {
             const currentOption = interaction.options.get(optionName);
             if (currentOption) {

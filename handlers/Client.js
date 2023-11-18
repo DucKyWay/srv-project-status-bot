@@ -92,7 +92,7 @@ class Bot extends Client {
           }
         }
 
-        if (data['buttons'] !== undefined) {
+        if (data['buttons'] && data['buttons'].length > 0) {
           const buttons = data['buttons'].map(button => new ButtonBuilder()
             .setCustomId(button.customId)
             .setLabel(button.label)

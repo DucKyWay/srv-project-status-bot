@@ -13,5 +13,5 @@ client.on("ready", () => {
 });
 
 client.on('interactionCreate', (interaction)=> {
-  console.log(interaction.user.username , interaction.user.id ,'Use interaction >',interaction.commandName , '<' )
+  console.log(interaction.user.username , interaction.user.id ,'Use interaction >',interaction.commandName ? interaction.commandName : interaction.customId, '<' )
 });
