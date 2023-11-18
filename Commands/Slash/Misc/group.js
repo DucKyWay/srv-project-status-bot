@@ -46,25 +46,25 @@ module.exports = {
         }
 
         if (chosenOption.name == 'create') {
-            const namechannel = interaction.options.get('create').value;
-            const roleName = interaction.options.get('create').value;
-            const roleColor = '#ffeb00';
-            console.log(namechannel);
-            const newChannel = await interaction.guild.channels.create({
-                name: namechannel,
-                type:  ChannelType.GuildText,
-            });
+            const group_name = interaction.options.get('create').value;
+            const role_name = interaction.options.get('create').value;
+            const role_color = '#ffeb00';
+
             try {
-                // สร้าง role ใหม่
-                await interaction.guild.roles.create({
-                    name: roleName,
-                    color: roleColor
+                const new_group_name = await interaction.guild.channels.create({
+                    name: group_name,
+                    type: ChannelType.GuildText,
                 });
-            
-                await interaction.reply(`Role \`${roleName}\` is created!`);
-                } catch (error) {
+
+                const new_role = await interaction.guild.roles.create({
+                    name: role_name,
+                    color: role_color
+                });
+
+                await interaction.reply(`Channel <#${new_group_name.id}> and role <@&${new_role.id}> are created!`);
+            } catch (error) {
                 console.error(error);
-                await interaction.reply('Failed to create role.');
+                await interaction.reply('Failed to create channel and role.');
             }
         }
         else if (chosenOption.name == 'adduser') {
