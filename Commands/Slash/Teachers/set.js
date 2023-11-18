@@ -2,6 +2,7 @@ const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionTyp
 const { Bot } = require("../../../handlers/Client");
 const client = require("../../..");
 const internal = require("stream");
+const { log } = require("console");
 
 module.exports = {
     name: "set",
@@ -53,7 +54,7 @@ module.exports = {
 
         }else if (chosenOption.name == 'set-role-teacher') {
 
-            console.log(`${chosenOption.name}`)
+            
 
         }else {
 
@@ -64,16 +65,22 @@ module.exports = {
                 buttons: [{
                     label: 'Call Teacher',
                     style: ButtonStyle.Danger,
-                    customId: 'callteacher'
+                    customId: 'callcenter'
                 }]
             }
 
             );
         }
-    },
-    runId: async (client , interaction) => {
-        if (interaction.customId) {
-            console.log(interaction.customId)
-        }
-    },
+    },    
 };
+
+client.on('interactionCreate', (interaction) => {
+    if (interaction.type == InteractionType.MessageComponent && interaction.isButton()) {
+        const customId = interaction.customId;
+        if (customId) {
+          if (customId == 'callcenter') {
+            
+          }
+        }
+    }
+});
