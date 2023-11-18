@@ -1,4 +1,4 @@
-const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, ButtonStyle } = require("discord.js");
+const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, ButtonStyle, Colors } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
 
 module.exports = {
@@ -63,7 +63,7 @@ module.exports = {
             return client.sendEmbed(interaction, {
                 title: 'Error 404',
                 description: 'please contact your teacher for fix it!',
-                color: '#ED4245',
+                color: Colors.Red,
                 buttons: [{
                     label: 'Call Teacher',
                     style: ButtonStyle.Danger,

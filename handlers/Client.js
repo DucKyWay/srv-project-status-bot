@@ -61,7 +61,7 @@ class Bot extends Client {
         .catch((e) => { });
     } else {
       const embedBuilder = new EmbedBuilder()
-        .setColor(`${data['color'] ? data['color'] : this.config.embed.color}`)
+        .setColor(`${data && data['color'] ? data['color'] : this.config.embed.color}`)
         .setAuthor({
           name: interaction.user.username,
           iconURL: interaction.user.avatarURL({ extension: 'jpg' }),
