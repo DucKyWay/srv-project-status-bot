@@ -1,9 +1,29 @@
-const { InteractionType, PermissionsBitField } = require("discord.js");
+const { InteractionType, PermissionsBitField, underscore, Colors } = require("discord.js");
 const client = require("../index");
+const { resolveObjectURL } = require("buffer");
+const { log } = require("console");
+const { embed } = require("../settings/config");
+const { title } = require("process");
+const { EmbedBuilder } = require("@discordjs/builders");
+const { config } = require("dotenv");
 
 client.on("interactionCreate", async (interaction) => {
   // code
   if (interaction.user.bot || !interaction.guild) return;
+  if (interaction.type == InteractionType.MessageComponent && interaction.isButton()) {
+      const customId = interaction.customId;
+      if (customId) {
+        const command = client.scommands.get(interaction)
+        if (!command) {
+          interaction.reply({
+            content: 'Error Please try again later.',
+            ephemeral: true,
+          })
+        }else {
+          command.runid(client,interaction);
+        }
+      }
+  }
   if (interaction.type == InteractionType.ApplicationCommand) {
     const command = client.scommands.get(interaction.commandName);
     if (!command) {

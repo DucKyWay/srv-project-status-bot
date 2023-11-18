@@ -1,5 +1,7 @@
 const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, ButtonStyle, Colors } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
+const client = require("../../..");
+const internal = require("stream");
 
 module.exports = {
     name: "set",
@@ -30,15 +32,6 @@ module.exports = {
     ],
 
     run: async (client, interaction, guild) => {
-
-        if (interaction.isButton()) {
-            // ดำเนินการตามที่คุณต้องการทำ
-            const customId = interaction.customId;
-            console.log(`Button with customId ${customId} was pressed.`);
-            // สามารถเพิ่มเงื่อนไขหรือการประมวลผลเพิ่มเติมตามความต้องการ
-            return;
-        }
-
         const optionNames = ['setcategory','set-role-teacher', 'testerror'];
         let chosenOption = null;
         
@@ -78,5 +71,9 @@ module.exports = {
             );
         }
     },
-
+    runId: async (client , interaction) => {
+        if (interaction.customId) {
+            console.log(interaction.customId)
+        }
+    },
 };
