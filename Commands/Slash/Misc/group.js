@@ -53,6 +53,7 @@ module.exports = {
             try {
                 const new_group_name = await interaction.guild.channels.create({
                     name: group_name,
+                    parent: "1174916854553260082",
                     type: ChannelType.GuildText,
                 });
 
