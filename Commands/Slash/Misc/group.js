@@ -71,7 +71,31 @@ module.exports = {
             }
         }
         else if (chosenOption.name == 'adduser') {
-            return "Add user to group."
+            // const user_tagged = interaction.options.getUser('adduser');
+            // const add_role = interaction.options.getString('some role'); 
+
+            // if (!user_tagged || !add_role) {
+            //     return interaction.reply({ content: "Please specify a user and a role.", ephemeral: true });
+            // }
+            // const role = interaction.guild.roles.cache.find(r => r.name === add_role);
+
+            // if (!role) {
+            //     return interaction.reply({ content: "Role not found.", ephemeral: true });
+            // }
+            // const member = interaction.guild.members.cache.get(user_tagged.id);
+
+            // if (!member) {
+            //     return interaction.reply({ content: "Member not found.", ephemeral: true });
+            // }
+
+            // try {
+            //     await member.roles.add(role);
+            //     await interaction.reply({ content: `Role ${role.name} added to ${member.displayName}.`, ephemeral: true });
+            // } catch (error) {
+            //     console.error(error);
+            //     await interaction.reply({ content: "Failed to add role.", ephemeral: true });
+            // }
+            return "Add user to your group."
         }
         else if (chosenOption.name == 'rename') {
             return "Rename your group."
