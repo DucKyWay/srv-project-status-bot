@@ -178,8 +178,11 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new EmbedBuilder()
-                                    .setTitle(`categoryId [<#${categoryId}>] has been updated`)
+                                    .setTitle(`category Id has been updated`)
                                     .setColor('Yellow')
+                                    .setFields(
+                                        {name: 'Category', value: `<#${categoryId}>` , inline: true}
+                                        ) 
                             ],
                         })
                     });
@@ -218,8 +221,11 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new EmbedBuilder()
-                                    .setTitle(`studentRoleId [<@&${studentRoleId}>] has been updated`)
+                                    .setTitle(`student Role Id  has been updated`)
                                     .setColor('Yellow')
+                                    .setFields(
+                                        {name: 'Student Role', value: `<@&${studentRoleId}>` , inline: true},
+                                        ) 
                             ],
 
                         })
@@ -260,8 +266,11 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new EmbedBuilder()
-                                    .setTitle(`teacherRoleId [<@&${teacherRoleId}>] has been updated`)
+                                    .setTitle(`teacher Role Id has been updated`)
                                     .setColor('Yellow')
+                                    .setFields(
+                                        {name: 'Teacher Role', value: `<@&${teacherRoleId}>` , inline: true},
+                                        ) 
                             ],
                         })
                     });
@@ -399,8 +408,13 @@ client.on('interactionCreate', async interaction => {
                             interaction.editReply({
                                 embeds: [
                                     new EmbedBuilder()
-                                        .setTitle(`studentRoleId [<@&${studentRoleId}> ,<@&${teacherRoleId}>, <#${categoryId}>] has been updated`)
+                                        .setTitle(`ALL Role And Id has been Update!!`)
                                         .setColor('Yellow')
+                                        .setFields(
+                                            {name: 'Student Role', value: `<@&${studentRoleId}>` , inline: true},
+                                            {name: 'Teacher Role', value: `<@&${teacherRoleId}>` , inline: true},
+                                            {name: 'Category', value: `<#${categoryId}>` , inline: true}
+                                            ) 
                                 ],
                                 components: [],
                             }).then((reply) => {
