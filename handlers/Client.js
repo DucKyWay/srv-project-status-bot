@@ -70,8 +70,8 @@ class Bot extends Client {
         // Check if data['URL'] is not null before setting it
         if (interaction.user.username && interaction.user.avatarURL) {
           embedBuilder.setAuthor({
-            name: interaction.user.username,
-            iconURL: interaction.user.avatarURL({ extension: 'jpg' }),
+            name: interaction.user.username ? interaction.user.username : interaction.author.username ,
+            iconURL: interaction.user.avatarURL({ extension: 'jpg' }) ? interaction.user.avatarURL({ extension: 'jpg' }) : interaction.author.avatarURL({ extension: 'jpg' })
           })
         }
         if (data['description'] !== undefined) {
