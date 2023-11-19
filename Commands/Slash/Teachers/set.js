@@ -137,7 +137,7 @@ module.exports = {
                 interaction.reply({
                     embeds: [embedbuilder],
                     components: [rowSelectMenu, rowSelectMenu2, rowSelectMenu3, rowButton],
-                    ephemeral: true
+                    // ephemeral: true
                 })
             })
             // ////////////////////////////////////////////////////////////////////////
