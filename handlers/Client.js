@@ -65,7 +65,7 @@ class Bot extends Client {
           .setTitle(`${data['title'] ? data['title'].substring(0, 3000) : data}`)
           
           .setColor(`${data['color'] ? data['color'] : 'Blurple'}`)
-          .setDescription(`${data['description'] ? data['description'].substring(0, 3000) : ''}`)
+          
           .setTimestamp()
 
         // Check if data['URL'] is not null before setting it
@@ -74,6 +74,9 @@ class Bot extends Client {
             name: interaction.user.username,
             iconURL: interaction.user.avatarURL({ extension: 'jpg' }),
           })
+        }
+        if (data['description'] !== undefined) {
+          embedBuilder.setDescription(data['description'].substring(0, 3000));
         }
         if (data['url'] !== null) {
           embedBuilder.setURL(data['URL']);
