@@ -1,4 +1,4 @@
-const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, ButtonStyle, Colors, EmbedBuilder, ButtonBuilder, Emoji, ActionRowBuilder } = require("discord.js");
+const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, ButtonStyle, Colors, EmbedBuilder, ButtonBuilder, Emoji, ActionRowBuilder, RoleSelectMenuBuilder, ChannelSelectMenuBuilder } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
 const client = require("../../..");
 const internal = require("stream");
@@ -10,7 +10,7 @@ const { SelectMenuBuilder } = require("@discordjs/builders");
 module.exports = {
     name: "set",
     description: 'set Category Channel or set Verify channels in your server discord.',
-    userPermissions: PermissionFlagsBits.SendMessages,
+    userPermissions: PermissionFlagsBits.Administrator,
     botPermissions: PermissionFlagsBits.Administrator,
     category: "Misc",
     type: ApplicationCommandType.ChatInput,
@@ -52,37 +52,101 @@ module.exports = {
                 break;
             }
         }
-
+// ////////////////////////////////////////////////////////////////////////
+// //////////////////////////// /set only  ////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////   
         if (!chosenOption) {
-            const embedbuilder = new EmbedBuilder()
-                .setTitle('Setting Bot')
-                .setColor('Gold')
-                .setThumbnail('https://i.pinimg.com/236x/3d/1f/0d/3d1f0d9c7a02cf3ac22b47a99b29aa99.jpg')
-                .setDescription('setting your bot for student create group and make onther this with bot.')
-                .setTimestamp()
+            fs.readFile('./data/data.json', 'utf8', (err, data) => {
+                if (err) {
+                    console.error('Error reading data.json:', err);
+                    return;
+                }
 
-            const buttons = new ButtonBuilder()
-                .setLabel('Confirm!')
-                .setStyle(3)
-                .setCustomId('confirm')
-                .setEmoji(emoji.success)
+                const guildId = interaction.guild.id;
 
-            const selectMenu = new SelectMenuBuilder()
-                .setCustomId('selectcategory')
-                .setPlaceholder('Select an option...')
-                .addOptions({
-                    label: 'test1',
-                    value: 'test2',
+                // Parse JSON data
+                const jsonData = JSON.parse(data);
+
+                // Update the teacher role for the corresponding guild
+                if (!jsonData[guildId]) {
+                    jsonData[guildId] = {};
+                }
+
+                try {
+                    var studentRole = jsonData[guildId].studentRole;
+                    var teacherRole = jsonData[guildId].teacherRole;
+                    var category = jsonData[guildId].categoryId;
+                }catch {
+                    var studentRole = undefined;
+                    var teacherRole = undefined;
+                    var category = undefined;
+                }
+
+                if (studentRole) {
+                    studentRole = `<@&${studentRole}>`
+                } else {
+                    studentRole = '`No Role`'
+                }
+                if (teacherRole) {
+                    teacherRole = `<@&${teacherRole}>`
+                } else {
+                    teacherRole = '`No Role`'
+                }
+                if (category) {
+                    category = `<@&${category}>`
+                }else {
+                    category = '`No Role`'
+                }
+
+                const embedbuilder = new EmbedBuilder()
+                    .setTitle('Setting Bot')
+                    .setColor('Gold')
+                    .setThumbnail('https://i.pinimg.com/236x/3d/1f/0d/3d1f0d9c7a02cf3ac22b47a99b29aa99.jpg')
+                    .setDescription('setting your bot for student create group and make onther this with bot.')
+                    .setFields(
+                        { name: 'Role Student', value: `${studentRole}`, inline: true },
+                        { name: 'Role Teacher', value: `${teacherRole}`, inline: true },
+                        { name: 'Category Select', value: `${category}`, inline: true },
+                    )
+                    .setTimestamp()
+
+                const selectMenu = new ChannelSelectMenuBuilder()
+                    .setCustomId('selectcategory')
+                    .setPlaceholder('Select Your Category.')
+                    .setChannelTypes(4)
+                    .setMaxValues(1)
+
+                const selectMenu2 = new RoleSelectMenuBuilder()
+                    .setCustomId('selectTeacherRole')
+                    .setPlaceholder('Select Your Teacher Role.')
+                    .setMaxValues(1)
+
+                const selectMenu3 = new RoleSelectMenuBuilder()
+                    .setCustomId('selectStudentRole')
+                    .setPlaceholder('Select Your StudentRole.')
+                    .setMaxValues(1)
+
+                const buttons = new ButtonBuilder()
+                    .setLabel('Confirm!')
+                    .setStyle(3)
+                    .setCustomId('confirm')
+                    .setEmoji(emoji.success)
+
+                // Action row with both button and select menu components
+                const rowButton = new ActionRowBuilder().addComponents(buttons);
+                const rowSelectMenu = new ActionRowBuilder().addComponents(selectMenu);
+                const rowSelectMenu2 = new ActionRowBuilder().addComponents(selectMenu2);
+                const rowSelectMenu3 = new ActionRowBuilder().addComponents(selectMenu3);
+
+                interaction.reply({
+                    embeds: [embedbuilder],
+                    components: [rowSelectMenu, rowSelectMenu2, rowSelectMenu3, rowButton],
+                    ephemeral: true
                 })
-
-            // Action row with both button and select menu components
-            const rowButton = new ActionRowBuilder().addComponents(buttons);
-            const rowSelectMenu = new ActionRowBuilder().addComponents(selectMenu);
-
-            interaction.reply({
-                embeds: [embedbuilder],
-                components: [rowButton, rowSelectMenu],
             })
+// ////////////////////////////////////////////////////////////////////////
+// //////////////////// chosenOption Name Check ///////////////////////////
+// ////////////////////////////////////////////////////////////////////////   
         } else {
             if (chosenOption.name == 'setcategory') {
 
@@ -161,6 +225,7 @@ module.exports = {
                                     .setTitle(`studentRoleId [${studentRoleId}] has been updated`)
                                     .setColor('Yellow')
                             ],
+
                         })
                     });
                 });
@@ -205,7 +270,9 @@ module.exports = {
                         })
                     });
                 });
-
+// ////////////////////////////////////////////////////////////////////////
+// //////////////////// Else print Error Contact ///////////////////////////
+// ////////////////////////////////////////////////////////////////////////   
             } else {
 
                 return client.sendEmbed(interaction, {
@@ -224,6 +291,10 @@ module.exports = {
         }
     },
 };
+
+// ////////////////////////////////////////////////////////////////////////
+// ///////// interaction Detect buttons and select menu //////////////////
+// ////////////////////////////////////////////////////////////////////////   
 
 client.on('interactionCreate', interaction => {
     if (interaction.type == InteractionType.MessageComponent && interaction.isButton()) {
@@ -261,7 +332,8 @@ client.on('interactionCreate', interaction => {
                                 interaction.reply({
                                     embeds: [new EmbedBuilder()
                                         .setTitle('No Teacher Please Try Again Later!!')
-                                    ]
+                                    ],
+
                                 })
                             } else {
 
@@ -275,7 +347,9 @@ client.on('interactionCreate', interaction => {
                                             .setTitle('Contact Teacher')
                                             .setDescription('Click on the teacher\'s name to initiate a direct message.')
                                             .addFields(teachers.filter(teacher => teacher.name && teacher.value))
+
                                     ],
+
                                 })
                             }
                         } else {

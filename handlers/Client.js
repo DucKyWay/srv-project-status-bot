@@ -6,9 +6,7 @@ const {
   Collection,
   EmbedBuilder,
   ActionRowBuilder,
-  Colors,
 } = require("discord.js");
-const { title } = require("process");
 // const mongoose = require('mongoose');
 
 class Bot extends Client {
