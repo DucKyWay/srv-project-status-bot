@@ -91,7 +91,7 @@ module.exports = {
                     teacherRole = '`No Role`'
                 }
                 if (category) {
-                    category = `<@&${category}>`
+                    category = `<#${category}>`
                 }else {
                     category = '`No Role`'
                 }
