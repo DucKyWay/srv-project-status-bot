@@ -1,11 +1,9 @@
-const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, ButtonStyle, Colors, EmbedBuilder, ButtonBuilder, Emoji, ActionRowBuilder, RoleSelectMenuBuilder, ChannelSelectMenuBuilder } = require("discord.js");
+const { ApplicationCommandType, PermissionFlagsBits, InteractionType, ButtonStyle, EmbedBuilder, ButtonBuilder, ActionRowBuilder, RoleSelectMenuBuilder, ChannelSelectMenuBuilder } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
 const client = require("../../..");
-const internal = require("stream");
 const { log } = require("console");
 const fs = require('fs');
 const { emoji } = require("../../../settings/config");
-const { SelectMenuBuilder } = require("@discordjs/builders");
 
 module.exports = {
     name: "set",
@@ -141,7 +139,7 @@ module.exports = {
                 interaction.reply({
                     embeds: [embedbuilder],
                     components: [rowSelectMenu, rowSelectMenu2, rowSelectMenu3, rowButton],
-                    ephemeral: true
+                    // ephemeral: true
                 })
             })
 // ////////////////////////////////////////////////////////////////////////
