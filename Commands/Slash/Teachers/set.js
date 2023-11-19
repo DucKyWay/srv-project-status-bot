@@ -1,7 +1,5 @@
 const { ApplicationCommandType, PermissionFlagsBits, InteractionType, ButtonStyle, EmbedBuilder, ButtonBuilder, ActionRowBuilder, RoleSelectMenuBuilder, ChannelSelectMenuBuilder } = require("discord.js");
-const { Bot } = require("../../../handlers/Client");
 const client = require("../../..");
-const { log } = require("console");
 const fs = require('fs');
 const { emoji } = require("../../../settings/config");
 
@@ -50,9 +48,9 @@ module.exports = {
                 break;
             }
         }
-// ////////////////////////////////////////////////////////////////////////
-// //////////////////////////// /set only  ////////////////////////////////
-// ////////////////////////////////////////////////////////////////////////   
+        // ////////////////////////////////////////////////////////////////////////
+        // //////////////////////////// /set only  ////////////////////////////////
+        // ////////////////////////////////////////////////////////////////////////   
         if (!chosenOption) {
             fs.readFile('./data/data.json', 'utf8', (err, data) => {
                 if (err) {
@@ -74,7 +72,7 @@ module.exports = {
                     var studentRole = jsonData[guildId].studentRole;
                     var teacherRole = jsonData[guildId].teacherRole;
                     var category = jsonData[guildId].categoryId;
-                }catch {
+                } catch {
                     var studentRole = undefined;
                     var teacherRole = undefined;
                     var category = undefined;
@@ -92,7 +90,7 @@ module.exports = {
                 }
                 if (category) {
                     category = `<#${category}>`
-                }else {
+                } else {
                     category = '`No Role`'
                 }
 
@@ -139,12 +137,12 @@ module.exports = {
                 interaction.reply({
                     embeds: [embedbuilder],
                     components: [rowSelectMenu, rowSelectMenu2, rowSelectMenu3, rowButton],
-                    // ephemeral: true
+                    ephemeral: true
                 })
             })
-// ////////////////////////////////////////////////////////////////////////
-// //////////////////// chosenOption Name Check ///////////////////////////
-// ////////////////////////////////////////////////////////////////////////   
+            // ////////////////////////////////////////////////////////////////////////
+            // //////////////////// chosenOption Name Check ///////////////////////////
+            // ////////////////////////////////////////////////////////////////////////   
         } else {
             if (chosenOption.name == 'setcategory') {
 
@@ -180,7 +178,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new EmbedBuilder()
-                                    .setTitle(`categoryId [${categoryId}] has been updated`)
+                                    .setTitle(`categoryId [<#${categoryId}>] has been updated`)
                                     .setColor('Yellow')
                             ],
                         })
@@ -220,7 +218,7 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new EmbedBuilder()
-                                    .setTitle(`studentRoleId [${studentRoleId}] has been updated`)
+                                    .setTitle(`studentRoleId [<@&${studentRoleId}>] has been updated`)
                                     .setColor('Yellow')
                             ],
 
@@ -262,15 +260,15 @@ module.exports = {
                         interaction.reply({
                             embeds: [
                                 new EmbedBuilder()
-                                    .setTitle(`teacherRoleId [${teacherRoleId}] has been updated`)
+                                    .setTitle(`teacherRoleId [<@&${teacherRoleId}>] has been updated`)
                                     .setColor('Yellow')
                             ],
                         })
                     });
                 });
-// ////////////////////////////////////////////////////////////////////////
-// //////////////////// Else print Error Contact ///////////////////////////
-// ////////////////////////////////////////////////////////////////////////   
+                // ////////////////////////////////////////////////////////////////////////
+                // //////////////////// Else print Error Contact ///////////////////////////
+                // ////////////////////////////////////////////////////////////////////////   
             } else {
 
                 return client.sendEmbed(interaction, {
@@ -294,7 +292,13 @@ module.exports = {
 // ///////// interaction Detect buttons and select menu //////////////////
 // ////////////////////////////////////////////////////////////////////////   
 
-client.on('interactionCreate', interaction => {
+var categoryId
+var studentRoleId
+var teacherRoleId
+let lastReplyId = null;
+
+client.on('interactionCreate', async interaction => {
+    const collectorFilter = i => i.user.id === interaction.user.id;
     if (interaction.type == InteractionType.MessageComponent && interaction.isButton()) {
         const customId = interaction.customId;
         if (customId) {
@@ -357,7 +361,83 @@ client.on('interactionCreate', interaction => {
                         console.error(`No data found for guild with ID ${guildId}.`);
                     }
                 });
+                // selectStudentRole selectTeacherRole selectcategory
+            } else if (customId == 'confirm') {
+                interaction.deferUpdate().then(() => {
+                    fs.readFile('./data/data.json', 'utf8', (err, data) => {
+                        if (err) {
+                            console.error('Error reading data.json:', err);
+                            return;
+                        }
+
+                        const guildId = interaction.guild.id;
+
+                        // Parse JSON data
+                        const jsonData = JSON.parse(data);
+
+                        // Update the teacher role for the corresponding guild
+                        if (!jsonData[guildId]) {
+                            jsonData[guildId] = {};
+                        }
+
+                        jsonData[guildId].studentRole = studentRoleId;
+                        jsonData[guildId].teacherRole = teacherRoleId;
+                        jsonData[guildId].categoryId = categoryId;
+
+                        // Convert the updated data to JSON string
+                        const updatedData = JSON.stringify(jsonData, null, 2);
+
+                        // Write the updated data back to data.json
+                        fs.writeFile('./data/data.json', updatedData, 'utf8', (writeErr) => {
+                            if (writeErr) {
+                                console.error('Error writing data.json:', writeErr);
+                                return;
+                            }
+                            console.log(`studentRoleId [${studentRoleId} ${teacherRoleId} ${categoryId}] has been updated and written to data.json`);
+
+                            // ใช้ interaction.followUp สำหรับการส่งข้อความใหม่
+                            interaction.editReply({
+                                embeds: [
+                                    new EmbedBuilder()
+                                        .setTitle(`studentRoleId [<@&${studentRoleId}> ,<@&${teacherRoleId}>, <#${categoryId}>] has been updated`)
+                                        .setColor('Yellow')
+                                ],
+                                components: [],
+                            }).then((reply) => {
+                                // Delete the last interaction message if there was a previous reply
+                                if (lastReplyId) {
+                                    interaction.channel.messages.fetch(lastReplyId).then((msg) => msg.delete());
+                                }
+                                // Store the ID of the current reply for future deletion
+                                lastReplyId = reply.id;
+                            });
+                        });
+                    });
+                });
             }
+        }
+
+    } if (interaction.isAnySelectMenu()) {
+        try {
+            const customId = interaction.customId;
+
+            const selectedValues = interaction.values;
+            const selectId = selectedValues[0];
+            await interaction.deferUpdate();
+            console.log("Selected Role ID:", selectId);
+
+            if (customId == "selectcategory") {
+                categoryId = selectId
+            }
+            if (customId == "selectTeacherRole") {
+                teacherRoleId = selectId
+            }
+            if (customId == "selectStudentRole") {
+                studentRoleId = selectId
+            }
+
+        } catch (e) {
+            console.log(e)
         }
     }
 });
