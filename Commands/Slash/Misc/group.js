@@ -1,4 +1,4 @@
-const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType } = require("discord.js");
+const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, EmbedBuilder } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
 const fs = require('fs');
 module.exports = {
@@ -80,11 +80,27 @@ module.exports = {
                     });
 
                     await member.roles.add(interaction.guild.roles.cache.find(r => r.name === role_name));
-
-                    await interaction.reply(`Channel <#${new_group_name.id}> and role <@&${new_role.id}> are created!`);
+                    // `Channel <#${new_group_name.id}> and role <@&${new_role.id}> are created!`
+                    interaction.reply({
+                        embeds: [
+                            new EmbedBuilder()
+                            .setTitle('Create Success')
+                            .setColor('Green')
+                            .setFields(
+                                {name: 'Group Name',value: `<#${new_group_name.id}>`,inline: true},
+                                {name: 'Your Role Name',value: `<@&${new_role.id}> `,inline: true},
+                                )
+                        ]
+                    });
                 } catch (error) {
                     console.error(error);
-                    await interaction.reply('Failed to create channel and role.');
+                    interaction.reply({
+                        embeds: [
+                            new EmbedBuilder()
+                            .setTitle('Failed to create channel and role.')
+                            .setColor("Red")
+                        ]
+                    });
                 }
             }
             else if (chosenOption.name == 'adduser') {
