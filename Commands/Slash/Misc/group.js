@@ -27,6 +27,12 @@ module.exports = {
             type: 3,
             required: false,
         },
+        {
+            name: 'delete_group',
+            description: 'delete your group name.',
+            type: 5,
+            required: false,
+        },
     ],
 
     run: async (client, interaction, guild) => {
@@ -46,7 +52,7 @@ module.exports = {
 
             const categoryId = jsonData[guildId].categoryId
 
-            const optionNames = ['create', 'adduser', 'rename'];
+            const optionNames = ['create', 'adduser', 'rename', 'delete_group'];
             let chosenOption = null;
 
             for (const optionName of optionNames) {
@@ -80,25 +86,32 @@ module.exports = {
                     });
 
                     await member.roles.add(interaction.guild.roles.cache.find(r => r.name === role_name));
+                    
+                    // Write data to json file.
+                    await writeData(interaction, ['group', new_group_name.id], {});
+                    await writeData(interaction , ['group',  new_group_name.id , 'roleId'] , new_role.id);
+                    await writeData(interaction , ['group',  new_group_name.id , 'headId'] , interaction.user.id);
+
                     // `Channel <#${new_group_name.id}> and role <@&${new_role.id}> are created!`
                     interaction.reply({
                         embeds: [
                             new EmbedBuilder()
-                            .setTitle('Create Success')
-                            .setColor('Green')
-                            .setFields(
-                                {name: 'Group Name',value: `<#${new_group_name.id}>`,inline: true},
-                                {name: 'Your Role Name',value: `<@&${new_role.id}> `,inline: true},
+                                .setTitle('Create Success')
+                                .setColor('Green')
+                                .setFields(
+                                    { name: 'Group Name', value: `<#${new_group_name.id}>`, inline: true },
+                                    { name: 'Your Role Name', value: `<@&${new_role.id}> `, inline: true },
                                 )
                         ]
                     });
+
                 } catch (error) {
                     console.error(error);
                     interaction.reply({
                         embeds: [
                             new EmbedBuilder()
-                            .setTitle('Failed to create channel and role.')
-                            .setColor("Red")
+                                .setTitle('Failed to create channel and role.')
+                                .setColor("Red")
                         ]
                     });
                 }
@@ -132,6 +145,11 @@ module.exports = {
             }
             else if (chosenOption.name == 'rename') {
                 return "Rename your group."
+            } else if (chosenOption.name == 'delete_group') {
+                const require = interaction.options.get('delete_group').value;
+                if (require) {
+                    
+                }
             } else {
                 return client.sendEmbed(interaction, {
                     title: 'Error 404',
@@ -140,5 +158,62 @@ module.exports = {
                 });
             }
         })
+    }
+};
+
+const getData = (( i , path) => {
+    fs.readFile('data/data.json', 'utf-8', (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        if (path) {
+            const guildId = i.guild.id;
+
+            const jsonData = JSON.parse(data);
+
+            if (!jsonData[guildId]) {
+                jsonData[guildId] = {};
+            }
+
+            const result = jsonData[guildId][path];
+            return result;
+        } else {
+            return;
+        }
+    });
+});
+
+const writeData = async (interaction, path, data) => {
+    try {
+        const filePath = 'data/data.json';
+
+        // Read the existing data from the file
+        const jsonData = fs.readFileSync(filePath, 'utf-8');
+        const parsedData = JSON.parse(jsonData);
+
+        const guildId = interaction.guild.id;
+
+        // Ensure the path exists in the JSON structure
+        let currentLevel = parsedData[guildId];
+        for (const level of path.slice(0, -1)) {
+            if (!currentLevel[level]) {
+                currentLevel[level] = {};
+            }
+            currentLevel = currentLevel[level];
+        }
+
+        // Set the data at the specified path
+        currentLevel[path[path.length - 1]] = data;
+
+        // Write the updated data back to the file
+        fs.writeFileSync(filePath, JSON.stringify(parsedData, null, 2), 'utf-8');
+
+        console.log(`Data ${data} has been updated and written to data.json`);
+        return true;
+    } catch (error) {
+        console.error('Error writing data.json:', error);
+        return false;
     }
 };

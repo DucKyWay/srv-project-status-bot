@@ -1,5 +1,7 @@
-const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType } = require("discord.js");
+const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, Embed } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
+const fs = require('fs');
+
 
 module.exports = {
     name: "create",
@@ -17,10 +19,10 @@ module.exports = {
         },
     ],
 
-    run: async (client, interaction,guild) => {
+    run: async (client, interaction, guild) => {
         // Retrieve the group name from the interaction options
         const groupName = interaction.options.getString('groupname');
-    
+
         // Check if groupName is undefined or an empty string
         if (!groupName || groupName.trim() === '') {
             return await interaction.reply('Please provide a valid group name.');
@@ -35,7 +37,7 @@ module.exports = {
             // Create a new text channel in the same category as the command was invoked
             const newChannel = await interaction.guild.channels.create({
                 name: groupName,
-                parent:"1174916854553260082",
+                parent: '',
                 type: ChannelType.GuildText,
             });
 
@@ -44,7 +46,10 @@ module.exports = {
             // You can do more things here, such as setting permissions for the new channel, etc.
         } catch (error) {
             console.error(`Error creating channel: ${error.message}`);
+            client.sendEmbed(interaction, {
+                title: 'No Chanels set! Please set the channel to use for create group!'
+            })
         }
     },
-    
 };
+
