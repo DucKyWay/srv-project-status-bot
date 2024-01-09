@@ -1,5 +1,5 @@
 const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, Embed } = require("discord.js");
-const { Bot } = require("../../../handlers/Client");
+const { Bot } = require("../handlers/Client");
 const fs = require('fs');
 
 

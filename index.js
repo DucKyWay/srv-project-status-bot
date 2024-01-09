@@ -1,9 +1,25 @@
 const { Bot } = require("./handlers/Client");
 const { TOKEN } = require("./settings/config");
-const client = new Bot();
-// const mongoose = require('mongoose');
+const { connectDB, connectDBNC, connectP } = require('./models/connect.js');
 
-// mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }).then(console.log('Connected to Mongodb.'));
+const client = new Bot();
+
+async function initialize() {
+    try {
+        const dbClient = await connectP();
+
+        // Now you can run MongoDB commands
+        await dbClient.command({ ping: 1 });
+        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
+        // Now you can continue with other initialization tasks or start the bot
+        client.build(TOKEN);
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error);
+    }
+}
+
+// Call the initialize function to start the process
+initialize();
 
 module.exports = client;
-client.build(TOKEN);

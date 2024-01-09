@@ -1,10 +1,7 @@
 const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, EmbedBuilder } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
 const { Server } = require('http');
-const fs = require('fs');
-
-const httpServer = new Server();
-const io = require('socket.io')(httpServer);
+const { connectDB, connectDBS } = require("../../../models/connect");
 let sendCount = 0;
 
 module.exports = {
@@ -16,10 +13,22 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     options: [
         {
+            name: 'comment',
+            description: 'comment to teacher.',
+            type: 3,
+            require: true,
+        },
+        {
             name: 'file',
             description: 'your file require (.pdf .zip and onther compress file.)',
             type: 11,
-            required: true,
+            required: false,
+        },
+        {
+            name: 'link',
+            description: 'add your work link to this',
+            type: 3,
+            require: false,
         }
     ],
 
@@ -28,21 +37,20 @@ module.exports = {
         if (interaction) {
             // Assuming the file path is in interaction.options.getString('file')
             const filePath = interaction.options.get('file');
-            console.log(filePath.attachment.attachment)
+            const link = interaction.options.get('link');
+            const comment = interaction.options.get('comment').value;
+            const data = filePath ? filePath.attachment.attachment : link.value
 
-            const savePath = 'data/sendData/' + filePath.attachment.name;
-            if (!fs.existsSync('data/sendData/')) {
-                fs.mkdirSync('data/sendData/');
-            }
+            console.log(data)
 
-            const fileBuffer = Buffer.from(filePath.attachment.attachment, 'binary');
-            fs.writeFileSync(savePath, fileBuffer, 'binary');
+            const nameFile = filePath ? filePath.attachment.name : link.name;
 
-            interaction.reply(`File saved to ${savePath}`);
-            sendCount++;
-
-            // ส่งข้อมูลไปยัง WebSocket เมื่อมีการใช้คำสั่ง "send"
-            io.emit('updateSendCount', { sendCount });
+            (await connectDBS()).insertOne({ channelId: interaction.guild.id, userId: interaction.user.id, sendData: { fileName: nameFile, file: data, comment: comment }, timestamp: Date.now() }).then((data) => {
+                console.log('Data add to database now!')
+            
+                client.sendEmbed(interaction, `ID: ${data.insertedId}`);
+                sendCount++;
+            })
         }
     }
 }
