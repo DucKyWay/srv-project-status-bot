@@ -1,7 +1,7 @@
 const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionType, EmbedBuilder } = require("discord.js");
 const { Bot } = require("../../../handlers/Client");
-const fs = require('fs');
 const { connectDB } = require("../../../models/connect");
+
 module.exports = {
     name: "group",
     description: 'Group management.',
@@ -101,9 +101,9 @@ module.exports = {
                 if (result) {
                     await (await connectDB()).updateOne({ channelId: interaction.guild.id }, {
                         $set: {
-                            [group_name]: 
+                            [group_name]:
                             {
-                                userId: {head: interaction.user.id}
+                                userId: { head: interaction.user.id }
                             }
                         }
                     });
@@ -139,35 +139,86 @@ module.exports = {
             }
         }
         else if (chosenOption.name == 'adduser') {
-            const userOption = interaction.options.getUser('adduser');
+            const userOption = await interaction.options.getUser('adduser');
             const user = userOption;
-            const result = await (await connectDB()).findOne({channelId: interaction.guild.id});
+            const result = await (await connectDB()).findOne({ channelId: interaction.guild.id });
             const groupName = interaction.options.get('groupname').value;
             if (!groupName) {
                 interaction.reply("Please Enther Group Name!!")
                 return
             }
-            const roleName = result[groupName]
+            const roleData = await result[groupName]
 
-            if (userOption.value) {
-                const role = await interaction.guild.roles.cache.find(role => role.name === roleName);
+            if (userOption.id && roleData) {
+                const role = interaction.guild.roles.cache.find(role => role.name === groupName);
                 try {
-                    await user.roles.add(role);
-                    interaction.reply(`Added role ${role.name} to user ${user.tag}`);
-                } catch (e) {
-                    interaction.reply(`fail` , e);
+                    await interaction.guild.members.fetch(user.id).then(member => {
+                        member.roles.add(role);
+                        client.sendEmbed(interaction, `Added role ${role.name} to user ${user.tag}`);
+                    });
+                } catch (err) {
+                    client.sendEmbed(interaction, `Fail: ${err}`);
                     return
                 }
-            }else {
+            } else {
+                client.sendEmbed(interaction, "Role Name Not Found!!")
                 return
             }
         }
         else if (chosenOption.name == 'rename') {
-            return "Rename your group."
+            const groupName = interaction.options.get('groupname').value;
+            const changeName = interaction.options.get('rename').value;
+
+            try {
+                const db = await connectDB();
+                const result = await db.findOne({ channelId: interaction.guild.id });
+                if (result[groupName]) {
+                    result[changeName] = result[groupName];
+                    delete result[groupName];
+                    await db.updateOne({ channelId: interaction.guild.id }, { $set: result });
+
+                    const group = await interaction.guild.channels.cache.find(ch => ch.name === groupName);
+                    if (group) {
+                        group.setName(changeName).then(updatedChannel => {
+                            client.sendEmbed(interaction, `Changed channel **${groupName}** to **${updatedChannel.name}** successfully!`);
+                        }).catch(err => {
+                            client.sendEmbed(interaction, `Fail to change channel: ${err}`);
+                        });
+                    } else {
+                        client.sendEmbed(interaction, `Channel **${groupName}** not found!`);
+                    }
+
+                    const role = await interaction.guild.roles.cache.find(groupName);
+                    if (role) {
+                        role.setName(changeName).then(updatedRole => {
+                            client.sendEmbed(interaction, `Changed role **${groupName}** to **${updatedRole.name}** successfully!`);
+                        }).catch(err => {
+                            client.sendEmbed(interaction, `Fail to change role: ${err}`);
+                        });
+                    } else {
+                        client.sendEmbed(interaction, `Role **${groupName}** not found!`);
+                    }
+                  
+                } else {
+                    client.sendEmbed(interaction, `1Fail Change ${err}`);
+                    return
+                }
+            } catch (err) {
+                client.sendEmbed(interaction, `2Fail Change ${err}`);
+                return
+            }
+
         } else if (chosenOption.name == 'delete_group') {
             const require = interaction.options.get('delete_group').value;
+            const name = interaction.options.get('groupname').value;
             if (require) {
-
+                try {
+                    const result = (await connectDB()).findOne({channelId: interaction.guild.id})
+                    delete result[name]
+                    client.sendEmbed(interaction , "Sussecc Remove out database!")
+                }catch (e) {
+                    client.sendEmbed(interaction , "Some Thing Wrong!!")
+                }
             }
         } else {
             return client.sendEmbed(interaction, {
