@@ -2,6 +2,7 @@ const { ApplicationCommandType, ChannelType, PermissionFlagsBits, InteractionTyp
 const { Bot } = require("../../../handlers/Client");
 const { Server } = require('http');
 const { connectDB, connectDBS } = require("../../../models/connect");
+const { sendMessageToLine } = require("../../../events/line");
 let sendCount = 0;
 
 module.exports = {
@@ -40,17 +41,34 @@ module.exports = {
             const link = interaction.options.get('link');
             const comment = interaction.options.get('comment').value;
             const data = filePath ? filePath.attachment.attachment : link.value
-
+           
             console.log(data)
+            if (filePath) {
+                // Assuming filePath is a valid path to an image file
+                const fileBuffer = Buffer.from(filePath.attachment.attachment, 'base64');
+              
+                // Create a thumbnail with sharp
+                const thumbnailBuffer = await sharp(fileBuffer)
+                  .resize({ width: 100, height: 100 })  // Adjust the size as needed
+                  .toBuffer();
+              
+                // Convert the thumbnail buffer to base64
+                thumbnailUrl = `data:image/jpeg;base64,${thumbnailBuffer.toString('base64')}`;
+              } else {
+                thumbnailUrl = link.value;  // Assuming link.value is the thumbnail URL
+              }
 
             const nameFile = filePath ? filePath.attachment.name : link.name;
+            await sendMessageToLine(thumbnailUrl, `${interaction.user.username} ส่งงาน`, comment, data).then(async () => {
+                (await connectDBS()).insertOne({ channelId: interaction.guild.id, userId: interaction.user.id, sendData: { fileName: nameFile, file: data, comment: comment }, timestamp: Date.now() }).then((data) => {
+                    console.log('Data add to database now!')
 
-            (await connectDBS()).insertOne({ channelId: interaction.guild.id, userId: interaction.user.id, sendData: { fileName: nameFile, file: data, comment: comment }, timestamp: Date.now() }).then((data) => {
-                console.log('Data add to database now!')
-            
-                client.sendEmbed(interaction, `ID: ${data.insertedId}`);
-                sendCount++;
+
+                    client.sendEmbed(interaction, `ID: ${data.insertedId}`);
+                    sendCount++;
+                })
             })
+
         }
     }
 }

@@ -1,6 +1,6 @@
 const { Bot } = require("./handlers/Client");
 const { TOKEN } = require("./settings/config");
-const { connectDB, connectDBNC, connectP } = require('./models/connect.js');
+const { connectP } = require('./models/connect.js');
 
 const client = new Bot();
 
